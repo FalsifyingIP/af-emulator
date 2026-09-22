@@ -26,6 +26,7 @@ Completed:
 - [x] Local hosts redirect template/helper
 - [x] RSA-1024 key generation helper
 - [x] Beginner setup tutorial
+- [x] TGame datetime runtime compatibility patch
 - [x] MIT license
 - [x] Working / partial / broken status documentation
 - [x] The Altar non-working sample documented
@@ -43,6 +44,7 @@ Tasks:
 - [x] Portable server key/log paths
 - [x] Hosts setup helper
 - [ ] Add a startup self-check for missing/incorrect files
+- [ ] Integrate/automate the required TGame datetime compatibility patch
 - [ ] Add a port-conflict diagnostic
 - [ ] Add a simple smoke-test script for VERSION/AUTH/DIR listeners
 - [ ] Document the required client-side raw-PEM APClient/TCLS compatibility step more completely
