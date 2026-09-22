@@ -11,7 +11,7 @@ You need:
 - Windows 10/11
 - Python 3.12 recommended
 - Git
-- your own lawfully obtained Assault Fire PH client
+- obtain a copy of 1.0.0.24 Assault Fire Game files
 - a local RSA private key used by your own emulator setup
 
 The repository does **not** distribute the original client, game assets, DLLs, maps, packages, or private keys.
