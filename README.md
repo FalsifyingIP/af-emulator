@@ -25,6 +25,33 @@ An unofficial, community-driven preservation and server-emulation project for **
 
 ➡️ **[Open the full non-working The Altar sample / investigation — Issue #1](https://github.com/armangido/af-emulator/issues/1)**
 
+## Vital launch information
+
+Getting the emulator listeners online is only half of the launch path. The stock PH launcher still has to hand the authenticated session from **TCLS → TGame.exe** correctly.
+
+The validated launch path includes:
+
+- matching `server\PRIVATE.PEM` + `TCLS\config\APClient.dat`;
+- localhost hosts redirects;
+- normal `client.exe / TCLS` login;
+- TCLS `GetLoginInfo` + selected-server lookup;
+- TCLS creation of `TCLS_SHAREDMEMEMORY<child PID>`;
+- optional **runtime-only TCLS suspended-launch compatibility patch** at `TCLS.dll+0x584E0` after verifying `8B 55 18 52`;
+- required TGame datetime runtime compatibility patch for the validated PH build;
+- successful `TGame.exe` ROLE/ZONE connections.
+
+The known TCLS suspended-launch patch temporarily changes:
+
+```text
+TCLS.dll + 0x584E0
+original: 8B 55 18 52
+runtime : 6A 04 90 90   ; push CREATE_SUSPENDED, nop, nop
+```
+
+It must be restored immediately after the child TGame is created. **Do not patch a different build unless the original signature matches. Do not distribute a modified TCLS.dll.**
+
+➡️ **[Read the full TCLS → TGame launch and compatibility guide](docs/LAUNCH_REQUIREMENTS.md)**
+
 ## Easy setup
 
 For a first local test:
@@ -79,6 +106,7 @@ New to the project?
 - **[Local hosts redirect](config/hosts.txt)** — ready-to-copy mappings for the retired PH service hostnames → `127.0.0.1`.
 - **[FAQ](docs/FAQ.md)** — common crashes, RSA/APClient questions, ports, The Altar status, and troubleshooting.
 - **[Architecture + port map](docs/ARCHITECTURE.md)** — quick diagram of how TCLS, TGame, the emulator, bridge, and AFDEV fit together.
+- **[Vital launch requirements](docs/LAUNCH_REQUIREMENTS.md)** — TCLS → TGame handoff, shared memory, validated TCLS runtime patch, TGame compatibility patch, and failure diagnosis.
 
 ## Current public baseline
 
