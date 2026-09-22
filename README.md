@@ -12,6 +12,7 @@ New to the project?
 - **[Working / broken / planned status](docs/STATUS.md)** — shows what currently works, what is only partial, what is broken/unavailable, and what contributors can help implement.
 - **[Contributing guide](CONTRIBUTING.md)** — rules for safe protocol research, pull requests, and sanitized evidence.
 - **[Stable PvE bridge + server spawner](docs/PVE_BRIDGE_AND_SPAWNER.md)** — known-good v5 UDP bridge and v26 AFDEV listen-server launcher used for The Altar research.
+- **[Local hosts redirect](config/hosts.txt)** — ready-to-copy mappings for the retired PH service hostnames → `127.0.0.1`.
 
 ## Current public baseline
 
