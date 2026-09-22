@@ -1,10 +1,10 @@
+#!/usr/bin/env python3
 # Stable Assault Fire PH AFDEV PVE listen-server spawner/launcher (v26)
 #
 # Known-good companion for the v5 transparent UDP bridge.
 # This script does not include or redistribute TGame_AFDEV.exe or map assets.
 # Supply your own lawful local game files via --game-dir or AF_GAME_DIR.
 #
-#!/usr/bin/env python3
 r"""
 AFDevLoader v0.26
 Assault Fire PH - PVE SYNTHETIC HOST OBSERVER FIX
@@ -50,7 +50,7 @@ EXPECTED_SHA256 = (
     "d51e77ce75b892250c1db7fb80c70b51"
 )
 
-DEFAULT_GAME_DIR = Path(r"D:\AssaultFirePH\Binaries\Win32")
+DEFAULT_GAME_DIR = Path(os.environ.get("AF_GAME_DIR", r".\\game\\Binaries\\Win32"))
 DEFAULT_MAP = "SV-Maya_3_Main"
 
 # ---------------------------------------------------------------------------
