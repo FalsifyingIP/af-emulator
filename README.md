@@ -139,4 +139,6 @@ This project is intended for preservation, interoperability, education, and rese
 
 ## License
 
-A project-code license has not yet been selected. Original game software and assets remain the property of their respective rights holders.
+The original code and documentation in this repository are licensed under the [MIT License](LICENSE).
+
+This license applies only to material created for the `af-emulator` project. It does **not** grant rights to Assault Fire, the original game client, executables, DLLs, maps, packages, artwork, audio, trademarks, or any other third-party material. Those remain the property of their respective rights holders.
