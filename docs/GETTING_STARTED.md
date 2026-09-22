@@ -1,22 +1,27 @@
-# Friendly Getting Started Guide
+# Easy Getting Started Guide
 
-Welcome! You do **not** need to understand the entire Assault Fire protocol before helping with this project.
+This guide is written for people who just want to get the **stable public v94 emulator** running without knowing the Assault Fire protocol first.
 
-The public repository starts from the stable **v94** emulator baseline. The goal of this guide is to get that baseline running locally and show you how to contribute without accidentally committing private keys or original game files.
+> Current limitation: use an **existing/local test profile path**. The unfinished first-time/new-account creation flow is intentionally not part of the stable public build.
 
-## 1. What you need
+## The short version
 
-You need:
+You will do six things:
 
-- Windows 10/11
-- Python 3.12 recommended
-- Git
-- obtain a copy of 1.0.0.24 Assault Fire Game files
-- a local RSA private key used by your own emulator setup
+```text
+1. Clone the repo
+2. Install the Python dependency
+3. Generate a local RSA key pair
+4. Redirect the old Assault Fire PH hostnames to 127.0.0.1
+5. Start the v94 server
+6. Launch your client
+```
 
-The repository does **not** distribute the original client, game assets, DLLs, maps, packages, or private keys.
+For PvE/The Altar research, the bridge and AFDEV spawner are optional extra steps later.
 
-## 2. Clone the repository
+---
+
+## 1. Clone the repository
 
 Open PowerShell:
 
@@ -25,36 +30,148 @@ git clone https://github.com/armangido/af-emulator.git
 cd af-emulator
 ```
 
-If you only want to test and not contribute yet, downloading the repository as a ZIP is also fine.
+No Git? You can also use GitHub's **Code → Download ZIP**, extract it, and open PowerShell inside the extracted folder.
 
-## 3. Create a Python environment
+---
 
-A virtual environment keeps the emulator dependencies separate from the rest of your PC.
+## 2. Install Python and the dependency
+
+Python **3.12** is recommended.
+
+Check that Python works:
+
+```powershell
+py -3.12 --version
+```
+
+Create a small virtual environment:
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
 ```
 
-If PowerShell blocks activation, you can still call the environment directly:
+Install the dependency:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## 4. Redirect the Assault Fire PH service hostnames to localhost
+You can use `.venv\Scripts\python.exe` for every command in this guide if plain `python` points at a different Python installation.
 
-The stable emulator listens on your own PC, so Windows must resolve the retired Assault Fire PH service hostnames to `127.0.0.1`.
+---
 
-A ready-to-copy template is included here:
+## 3. Generate your local RSA key pair
+
+This is the easiest method. **You do not need OpenSSL.**
+
+The Assault Fire PH AUTH protocol used by this project expects a **1024-bit RSA key** for legacy client compatibility. The server receives a 128-byte RSA ciphertext and produces a 128-byte signature, so a different RSA size will not work with this protocol.
+
+> RSA-1024 is obsolete for modern security. This helper uses it only because the legacy game protocol requires it. Do not reuse this key for websites, SSH, certificates, passwords, or anything security-sensitive.
+
+### Easiest one-command setup
+
+Replace the example path below with the folder that contains your client's existing `APClient.dat`.
+
+Typical client layout:
 
 ```text
-config/hosts.txt
+<YOUR ASSAULT FIRE FOLDER>
+└── TCLS
+    └── config
+        └── APClient.dat
 ```
 
-The active lines are:
+Example:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\setup\generate_local_rsa_keypair.py --client-config-dir "D:\AssaultFirePH\TCLS\config"
+```
+
+The helper will:
+
+1. generate `server\PRIVATE.PEM`;
+2. generate the matching public key as `generated\APClient.dat`;
+3. back up your current client `APClient.dat` if one already exists;
+4. copy the new matching public key into your client's `TCLS\config\APClient.dat`.
+
+Expected output looks roughly like:
+
+```text
+[OK] Generated a matching Assault Fire PH local RSA-1024 key pair.
+
+[PRIVATE - SERVER]
+  ...\server\PRIVATE.PEM
+  Keep this file private. Never commit or upload it.
+
+[PUBLIC - CLIENT]
+  ...\generated\APClient.dat
+
+[BACKUP] ...\TCLS\config\APClient.dat
+      -> ...\APClient.dat.backup_YYYYMMDD_HHMMSS
+
+[OK] Installed matching public key:
+  ...\TCLS\config\APClient.dat
+```
+
+### Important: PRIVATE.PEM and APClient.dat must match
+
+Think of them as a pair:
+
+```text
+server\PRIVATE.PEM          <---- matching pair ---->   TCLS\config\APClient.dat
+PRIVATE KEY                                            PUBLIC KEY
+server keeps this                                     client uses this
+NEVER upload it                                       safe to regenerate
+```
+
+If you generate a new `PRIVATE.PEM` but keep an old `APClient.dat`, AUTH will fail.
+
+### Never upload PRIVATE.PEM
+
+The repository's `.gitignore` blocks `PRIVATE.PEM`, `*.PEM`, and generated key files, but still check before every push:
+
+```powershell
+git status --short
+```
+
+You should **never** see `server\PRIVATE.PEM` staged for commit.
+
+### If you only want to generate the files
+
+Run:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\setup\generate_local_rsa_keypair.py
+```
+
+That creates:
+
+```text
+server\PRIVATE.PEM
+generated\APClient.dat
+```
+
+Then copy `generated\APClient.dat` yourself to:
+
+```text
+<YOUR GAME FOLDER>\TCLS\config\APClient.dat
+```
+
+### Client compatibility note
+
+The known working local setup uses `APClient.dat` as a raw PEM RSA-1024 public key. The original PH TCLS build required the already-known small local loader patch so it accepts that raw PEM file.
+
+This repository does **not** distribute a modified `TCLS.dll`.
+
+If VERSION works but AUTH fails immediately at the RSA step even though the two generated files match, check that your local TCLS setup is the version/configuration that reads the raw PEM `APClient.dat`.
+
+---
+
+## 4. Redirect the retired Assault Fire PH services to localhost
+
+The local emulator needs the old PH service names to resolve to your own PC.
+
+The three mappings are:
 
 ```text
 127.0.0.1    tversion.levelupgames.ph
@@ -62,120 +179,209 @@ The active lines are:
 127.0.0.1    tdir.levelupgames.ph
 ```
 
-These map the client's VERSION, AUTH, and DIR/ROLE discovery traffic back to the local emulator.
+### Easiest method
 
-### Manual method
-
-1. Open **Notepad as Administrator**.
-2. Open:
-
-```text
-C:\Windows\System32\drivers\etc\hosts
-```
-
-3. Add the three lines above.
-4. Save the file.
-5. Open an Administrator PowerShell or Command Prompt and run:
-
-```powershell
-ipconfig /flushdns
-```
-
-### Automatic helper
-
-The repository also includes a helper that backs up your current hosts file before making the change:
+Open **PowerShell as Administrator**, go to the repository folder, then run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\setup\setup_assaultfire_hosts.ps1
 ```
 
-Run that command from an **Administrator PowerShell**.
+The helper:
 
-The script creates a timestamped backup next to the Windows hosts file, removes only conflicting entries for these three Assault Fire PH hostnames, adds the localhost mappings, and flushes the DNS cache.
+- backs up your current Windows hosts file;
+- removes conflicting entries only for these three Assault Fire PH names;
+- adds the localhost mappings;
+- flushes the Windows DNS cache.
 
-### Undoing the redirect
+A plain copy of the mappings is also available at:
 
-Either remove/comment the three Assault Fire lines from the Windows hosts file and run:
+```text
+config\hosts.txt
+```
+
+### Manual method
+
+Open Notepad as Administrator and edit:
+
+```text
+C:\Windows\System32\drivers\etc\hosts
+```
+
+Add the three lines, save, then run:
 
 ```powershell
 ipconfig /flushdns
 ```
 
-or restore the timestamped backup created by the setup helper.
+---
 
-## 5. Supply your local private key
+## 5. Start the stable v94 emulator
 
-The server needs the RSA private key from **your own local emulator setup**.
-
-The easiest layout is:
-
-```text
-af-emulator/
-└── server/
-    ├── assaultfire_server_v94.py
-    └── PRIVATE.PEM
-```
-
-`PRIVATE.PEM` is ignored by Git and must never be committed.
-
-You can also keep the key somewhere else:
+From the repository folder:
 
 ```powershell
-$env:AF_PRIVATE_KEY = "D:\your-private-folder\PRIVATE.PEM"
+.\.venv\Scripts\python.exe .\server\assaultfire_server_v94.py
 ```
 
-Optional paths:
+The server now automatically looks for:
+
+```text
+server\PRIVATE.PEM
+```
+
+A good sign is:
+
+```text
+[BOOT] Loaded RSA private key from ...
+[VERSION] Listening on port 9060
+[AUTH] Listening on port 8000
+[DIR] Listening on port 9010
+...
+[MAIN] All listeners running.
+```
+
+If your private key is stored somewhere else, you can point the server to it:
+
+```powershell
+$env:AF_PRIVATE_KEY = "D:\MyPrivateFolder\PRIVATE.PEM"
+.\.venv\Scripts\python.exe .\server\assaultfire_server_v94.py
+```
+
+Optional log path:
 
 ```powershell
 $env:AF_LOG_PATH = "D:\af-logs\server.log"
-$env:AF_X32DBG_LOG = "D:\af-logs\x32dbg.log"
 ```
 
-## 6. Start the stable emulator
+Keep the server window open while testing.
 
-From the repository root:
+---
+
+## 6. Launch Assault Fire PH
+
+Start the client using the same local client setup you normally use.
+
+The hosts entries send VERSION/AUTH/DIR traffic to the emulator on your PC.
+
+For the public **v94** baseline, test an existing/local profile path. Do not use the unfinished new-account/nickname flow as your first test.
+
+### First things to check
+
+| Check | Expected |
+|---|---|
+| VERSION reaches local server | ✅ |
+| Login AUTH handshake reaches local server | ✅ |
+| Server list/DIR loads | ✅ |
+| Existing local profile reaches zone/login path | ✅ baseline target |
+| Basic profile/property state | ✅ baseline target |
+| First-ever account creation | ❌ not supported in public v94 |
+| Full The Altar round lifecycle | ❌ still under research |
+
+See [STATUS.md](STATUS.md) for the detailed working/partial/broken matrix.
+
+---
+
+## 7. Optional: The Altar / PvE research setup
+
+You do **not** need this part just to test VERSION/AUTH/DIR/login.
+
+For the current known-good PvE research path, use:
+
+```text
+tools\server_spawner\AFDevLoader_v26_pve_natural_loading_completion.py
+tools\bridge\af_ds_udp_bridge_v5_actor_dump.py
+```
+
+Full instructions:
+
+**[Stable PvE bridge + server spawner guide](PVE_BRIDGE_AND_SPAWNER.md)**
+
+The known-good components can currently reach this point:
+
+```text
+room creation
+  -> The Altar loading
+  -> map entry
+  -> player spawn
+  -> HUD / weapon / movement
+```
+
+The normal PvE round/enemy lifecycle is still incomplete.
+
+See **[The Altar investigation — Issue #1](https://github.com/armangido/af-emulator/issues/1)**.
+
+---
+
+## 8. Super-simple troubleshooting
+
+### Server says it cannot load PRIVATE.PEM
+
+Run the generator again:
 
 ```powershell
-python .\server\assaultfire_server_v94.py
+.\.venv\Scripts\python.exe .\tools\setup\generate_local_rsa_keypair.py
 ```
 
-A healthy startup should identify the v94 build and start the local listeners used by the emulator.
+Then confirm this file exists:
 
-The current stable branch uses the local VERSION, AUTH, DIR, ROLE, and ZONE services.
+```text
+server\PRIVATE.PEM
+```
 
-Do not expose these development listeners directly to the public internet. The project is intended for local/isolated preservation testing.
+### AUTH reaches the server but RSA decrypt fails
 
-## 7. Start your Assault Fire PH client
+The most common thing to check first is that the client public key and server private key are from the **same generated pair**.
 
-Use the same client/configuration you use for your local emulator environment.
+Regenerate/install both together:
 
-The project does not ship modified game binaries or client assets. Client-side setup therefore depends on the copy you already have.
+```powershell
+.\.venv\Scripts\python.exe .\tools\setup\generate_local_rsa_keypair.py --client-config-dir "D:\YourGameFolder\TCLS\config" --force
+```
 
-For the **v94 public baseline**, use an existing known local profile/account path. Do not expect the unfinished first-time account/nickname creation flow to work.
+Then restart both the server and client.
 
-## 8. What should I test first?
+If it still fails immediately at RSA, verify your TCLS setup reads the raw PEM `APClient.dat`.
 
-For a first test, keep it simple:
+### The client tries the old internet host instead of localhost
 
-| Test | Expected state |
-|---|---|
-| Emulator starts without Python errors | Should work |
-| VERSION connection | Should work |
-| AUTH handshake | Should work |
-| DIR/server discovery | Should work |
-| Existing local profile reaches the established zone/login path | Stable baseline target |
-| Basic profile/inventory state appears | Stable baseline target |
-| First-ever account/nickname creation | Not supported in public v94 |
-| Full PvE/The Altar round lifecycle | Not supported yet |
-| Full real multiplayer/DS lifecycle | Not supported yet |
+Run Administrator PowerShell:
 
-See [STATUS.md](STATUS.md) for the detailed matrix.
+```powershell
+ipconfig /flushdns
+```
 
-## 9. Something failed — what should I send?
+Then check:
 
-Please do **not** send a 50 MB unsanitized dump first.
+```powershell
+ping tversion.levelupgames.ph
+```
 
-A useful bug report contains:
+It should resolve to:
+
+```text
+127.0.0.1
+```
+
+### Port already in use
+
+The stable backend uses several local ports including:
+
+```text
+9060   VERSION
+8000   AUTH
+9010   DIR
+65005  ROLE
+65006  ZONE in the stable configuration
+```
+
+Close an older copy of the emulator before starting another one.
+
+---
+
+## 9. How to report a useful bug
+
+Please include:
 
 ```text
 Client version:
@@ -194,96 +400,33 @@ Does it reproduce after restarting both client and server?
 Yes / No
 ```
 
-Before uploading logs, remove:
+Before posting logs publicly, remove:
 
-- passwords
-- private keys
-- access tokens
-- personal account information
-- unrelated local filesystem details
+- passwords;
+- private keys;
+- access tokens;
+- personal account information;
+- unrelated local filesystem details.
 
-Localhost addresses and project packet data are normally useful, but still review everything before posting publicly.
+Never attach `PRIVATE.PEM`.
 
-## 10. Beginner-friendly ways to contribute
+---
 
-You do not have to reverse engineer assembly.
+## 10. Easy ways to contribute
 
-Useful contributions include:
+You do not have to know assembly.
 
-- improving documentation;
-- turning known packet structures into Python dataclasses/parsers;
-- adding tests around existing packet builders;
-- cleaning duplicated server code without changing behavior;
-- creating sanitized protocol examples;
-- reproducing an open issue and reporting exactly what happened;
-- documenting which stock-client button produces which command ID;
-- comparing two sanitized packet captures;
-- improving setup scripts and error messages.
+Helpful contributions include:
 
-If you **do** reverse engineer the client, describe behavior and structures in your own words. Do not commit the original executables, assets, or large copied blocks of proprietary decompiled/disassembled code.
+- making the setup guide clearer;
+- adding tests;
+- documenting packet IDs;
+- reproducing an issue and reporting exact steps;
+- comparing sanitized packet captures;
+- improving Python error messages;
+- documenting which client UI action produces which request;
+- helping verify partial lobby/social/clan/PvE behavior.
 
-## 11. Working on an unfinished feature
+Please read [../CONTRIBUTING.md](../CONTRIBUTING.md) before submitting code.
 
-Start by checking [STATUS.md](STATUS.md).
-
-For incomplete protocol work, a good contribution usually follows this pattern:
-
-```text
-1. Reproduce one client action.
-2. Record the request command and sanitized body.
-3. Identify the expected response family.
-4. Verify field widths/order from evidence.
-5. Implement the smallest response.
-6. Test it with the stock client.
-7. Document what was proven and what is still inferred.
-```
-
-Please avoid making large guessed packet structures just to make the UI stop complaining. Unknown nested structures should stay explicitly marked as unknown until evidence supports them.
-
-## 12. Keep your branch safe
-
-Create a feature branch:
-
-```powershell
-git checkout -b research/my-feature
-```
-
-Check what you are about to commit:
-
-```powershell
-git status
-git diff
-```
-
-A good habit before every push:
-
-```powershell
-git status --short
-```
-
-If you see `PRIVATE.PEM`, game executables, DLLs, UPK/UDK files, dumps, databases, or personal logs, **do not commit them**.
-
-## 13. Submit your work
-
-Commit your changes:
-
-```powershell
-git add <only-the-files-you-intend-to-share>
-git commit -m "docs: document A123 packet behavior"
-git push -u origin research/my-feature
-```
-
-Then open a pull request and explain:
-
-- what you changed;
-- what evidence supports it;
-- how you tested it;
-- what is still uncertain.
-
-Small, well-proven contributions are more useful than a huge patch built on guesses.
-
-## Need help?
-
-Open a GitHub issue describing the exact point where you are stuck. Include the smallest useful sanitized log or packet sample you have.
-
-If you are unsure whether something is safe to publish, ask before uploading it.
+Small changes with clear evidence are better than large guessed protocol implementations.
