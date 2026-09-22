@@ -60,6 +60,7 @@ New to the project?
 
 - **[Friendly setup tutorial](docs/GETTING_STARTED.md)** — clone, install, configure the local key, run v94, test the client, and prepare a useful bug report.
 - **[Working / broken / planned status](docs/STATUS.md)** — shows what currently works, what is only partial, what is broken/unavailable, and what contributors can help implement.
+- **[Project milestones](docs/MILESTONES.md)** — roadmap from the stable v94 baseline through The Altar, dedicated-server lifecycle, and a preservation-quality release.
 - **[Contributing guide](CONTRIBUTING.md)** — rules for safe protocol research, pull requests, and sanitized evidence.
 - **[Stable PvE bridge + server spawner](docs/PVE_BRIDGE_AND_SPAWNER.md)** — known-good v5 UDP bridge and v26 AFDEV listen-server launcher used for The Altar research.
 - **[Local hosts redirect](config/hosts.txt)** — ready-to-copy mappings for the retired PH service hostnames → `127.0.0.1`.
