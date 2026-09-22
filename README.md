@@ -4,6 +4,18 @@ An unofficial, community-driven preservation and server-emulation project for **
 
 > This project is not affiliated with, endorsed by, or sponsored by Tencent, Level Up! Games, or any original rights holder.
 
+## Current The Altar state — video preview
+
+> **The Altar currently loads and the player can spawn, but the normal PvE round/enemy lifecycle does not start correctly.**
+
+<a href="https://github.com/armangido/af-emulator/issues/1">
+  <img src="docs/media/altar_nonworking_preview.gif" alt="Animated preview of the current non-working The Altar PvE state" width="640">
+</a>
+
+**What this sample demonstrates:** room creation → The Altar loading → map entry/player spawn works, while the post-load PvE round progression is still incomplete.
+
+➡️ **[Open the full non-working The Altar sample / investigation — Issue #1](https://github.com/armangido/af-emulator/issues/1)**
+
 ## Start here
 
 New to the project?
