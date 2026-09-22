@@ -258,7 +258,57 @@ Keep the server window open while testing.
 
 ---
 
-## 6. Launch Assault Fire PH
+## 6. Apply the required TGame datetime compatibility patch
+
+Before launching the game, start the runtime datetime patcher in a **second PowerShell window**:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tgame_datetime.py
+```
+
+You should see:
+
+```text
+Waiting for TGame.exe ...
+You can launch the game now.
+```
+
+Leave that window open and then launch Assault Fire.
+
+When `TGame.exe` starts, the helper should print:
+
+```text
+PATCHED
+...
+Datetime fix is active for this TGame process.
+```
+
+### Why this is needed
+
+The known PH client build can enter a datetime conversion path with an invalid/pre-1900 year and crash.
+
+The runtime patch is applied at:
+
+```text
+TGame.exe + 0x010B9510
+VA 0x014B9510 when image base = 0x00400000
+```
+
+The patcher first verifies the expected original bytes:
+
+```text
+83 EC 24 53 8B 5C 24 2C
+```
+
+If your TGame build does not match, the helper stops and patches nothing.
+
+This is a **runtime-only compatibility patch**. It does not modify `TGame.exe` on disk.
+
+More details: [Issue #3 — required TGame datetime patch](https://github.com/armangido/af-emulator/issues/3).
+
+---
+
+## 7. Launch Assault Fire PH
 
 Start the client using the same local client setup you normally use.
 
@@ -282,7 +332,7 @@ See [STATUS.md](STATUS.md) for the detailed working/partial/broken matrix.
 
 ---
 
-## 7. Optional: The Altar / PvE research setup
+## 8. Optional: The Altar / PvE research setup
 
 You do **not** need this part just to test VERSION/AUTH/DIR/login.
 
@@ -313,7 +363,7 @@ See **[The Altar investigation — Issue #1](https://github.com/armangido/af-emu
 
 ---
 
-## 8. Super-simple troubleshooting
+## 9. Super-simple troubleshooting
 
 ### Server says it cannot load PRIVATE.PEM
 
@@ -379,7 +429,7 @@ Close an older copy of the emulator before starting another one.
 
 ---
 
-## 9. How to report a useful bug
+## 10. How to report a useful bug
 
 Please include:
 
@@ -412,7 +462,7 @@ Never attach `PRIVATE.PEM`.
 
 ---
 
-## 10. Easy ways to contribute
+## 11. Easy ways to contribute
 
 You do not have to know assembly.
 
