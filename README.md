@@ -52,6 +52,14 @@ Start the stable server:
 
 The RSA helper creates `server\PRIVATE.PEM` automatically. **Never upload or commit that file.**
 
+Before launching the client, start the required **TGame datetime patch** in another PowerShell window:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tgame_datetime.py
+```
+
+This runtime-only patch prevents the known client datetime crash on the validated PH build. See [Issue #3](https://github.com/armangido/af-emulator/issues/3).
+
 ➡️ **[Read the very easy step-by-step tutorial](docs/GETTING_STARTED.md)**
 
 ## Start here
