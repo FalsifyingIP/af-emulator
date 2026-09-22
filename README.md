@@ -4,6 +4,14 @@ An unofficial, community-driven preservation and server-emulation project for **
 
 > This project is not affiliated with, endorsed by, or sponsored by Tencent, Level Up! Games, or any original rights holder.
 
+## Start here
+
+New to the project?
+
+- **[Friendly setup tutorial](docs/GETTING_STARTED.md)** — clone, install, configure the local key, run v94, test the client, and prepare a useful bug report.
+- **[Working / broken / planned status](docs/STATUS.md)** — shows what currently works, what is only partial, what is broken/unavailable, and what contributors can help implement.
+- **[Contributing guide](CONTRIBUTING.md)** — rules for safe protocol research, pull requests, and sanitized evidence.
+
 ## Current public baseline
 
 The current public baseline is **v94**.
