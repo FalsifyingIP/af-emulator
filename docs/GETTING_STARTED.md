@@ -44,7 +44,66 @@ If PowerShell blocks activation, you can still call the environment directly:
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## 4. Supply your local private key
+## 4. Redirect the Assault Fire PH service hostnames to localhost
+
+The stable emulator listens on your own PC, so Windows must resolve the retired Assault Fire PH service hostnames to `127.0.0.1`.
+
+A ready-to-copy template is included here:
+
+```text
+config/hosts.txt
+```
+
+The active lines are:
+
+```text
+127.0.0.1    tversion.levelupgames.ph
+127.0.0.1    tauthproxy.levelupgames.ph
+127.0.0.1    tdir.levelupgames.ph
+```
+
+These map the client's VERSION, AUTH, and DIR/ROLE discovery traffic back to the local emulator.
+
+### Manual method
+
+1. Open **Notepad as Administrator**.
+2. Open:
+
+```text
+C:\Windows\System32\drivers\etc\hosts
+```
+
+3. Add the three lines above.
+4. Save the file.
+5. Open an Administrator PowerShell or Command Prompt and run:
+
+```powershell
+ipconfig /flushdns
+```
+
+### Automatic helper
+
+The repository also includes a helper that backs up your current hosts file before making the change:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\setup\setup_assaultfire_hosts.ps1
+```
+
+Run that command from an **Administrator PowerShell**.
+
+The script creates a timestamped backup next to the Windows hosts file, removes only conflicting entries for these three Assault Fire PH hostnames, adds the localhost mappings, and flushes the DNS cache.
+
+### Undoing the redirect
+
+Either remove/comment the three Assault Fire lines from the Windows hosts file and run:
+
+```powershell
+ipconfig /flushdns
+```
+
+or restore the timestamped backup created by the setup helper.
+
+## 5. Supply your local private key
 
 The server needs the RSA private key from **your own local emulator setup**.
 
@@ -72,7 +131,7 @@ $env:AF_LOG_PATH = "D:\af-logs\server.log"
 $env:AF_X32DBG_LOG = "D:\af-logs\x32dbg.log"
 ```
 
-## 5. Start the stable emulator
+## 6. Start the stable emulator
 
 From the repository root:
 
@@ -86,7 +145,7 @@ The current stable branch uses the local VERSION, AUTH, DIR, ROLE, and ZONE serv
 
 Do not expose these development listeners directly to the public internet. The project is intended for local/isolated preservation testing.
 
-## 6. Start your Assault Fire PH client
+## 7. Start your Assault Fire PH client
 
 Use the same client/configuration you use for your local emulator environment.
 
@@ -94,7 +153,7 @@ The project does not ship modified game binaries or client assets. Client-side s
 
 For the **v94 public baseline**, use an existing known local profile/account path. Do not expect the unfinished first-time account/nickname creation flow to work.
 
-## 7. What should I test first?
+## 8. What should I test first?
 
 For a first test, keep it simple:
 
@@ -112,7 +171,7 @@ For a first test, keep it simple:
 
 See [STATUS.md](STATUS.md) for the detailed matrix.
 
-## 8. Something failed — what should I send?
+## 9. Something failed — what should I send?
 
 Please do **not** send a 50 MB unsanitized dump first.
 
@@ -145,7 +204,7 @@ Before uploading logs, remove:
 
 Localhost addresses and project packet data are normally useful, but still review everything before posting publicly.
 
-## 9. Beginner-friendly ways to contribute
+## 10. Beginner-friendly ways to contribute
 
 You do not have to reverse engineer assembly.
 
@@ -163,7 +222,7 @@ Useful contributions include:
 
 If you **do** reverse engineer the client, describe behavior and structures in your own words. Do not commit the original executables, assets, or large copied blocks of proprietary decompiled/disassembled code.
 
-## 10. Working on an unfinished feature
+## 11. Working on an unfinished feature
 
 Start by checking [STATUS.md](STATUS.md).
 
@@ -181,7 +240,7 @@ For incomplete protocol work, a good contribution usually follows this pattern:
 
 Please avoid making large guessed packet structures just to make the UI stop complaining. Unknown nested structures should stay explicitly marked as unknown until evidence supports them.
 
-## 11. Keep your branch safe
+## 12. Keep your branch safe
 
 Create a feature branch:
 
@@ -204,7 +263,7 @@ git status --short
 
 If you see `PRIVATE.PEM`, game executables, DLLs, UPK/UDK files, dumps, databases, or personal logs, **do not commit them**.
 
-## 12. Submit your work
+## 13. Submit your work
 
 Commit your changes:
 
