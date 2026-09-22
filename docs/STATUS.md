@@ -28,6 +28,8 @@ Later experimental branches are intentionally excluded from `main` until they ar
 | Shop foundation | ✅ | Stable shop/balance/purchase work from the pre-v95 branch is present. |
 | Clan ID persistence | ✅ | v94 persists clan membership/ClanID and reflects it in PlayerInfo. |
 | Clan name verification/create request shapes | ✅ | Known v94 request/response shapes are implemented for the stable branch. |
+| DS UDP bridge v5 | ✅ | Known-good transparent 65008 ↔ 7777 bridge used during successful PvE map-entry tests. |
+| AFDEV PvE spawner v26 | ✅ | Known-good listen-server launcher used to load SV-Maya_3_Main for PvE research. |
 
 ## Partial or research-grade features
 
@@ -39,7 +41,7 @@ Later experimental branches are intentionally excluded from `main` until they ar
 | Private chat | 🟡 | v94 uses a LocalFriend echo/test path. Real friend-to-friend online/offline delivery is not part of this stable baseline. |
 | Clans | 🟡 | Basic create/name/persistence behavior exists. Large nested clan detail/member responses were deliberately not guessed and still require verification. |
 | Inventory/equipment | 🟡 | The stable profile/property path works, but not every item/equipment/UI edge case is verified. |
-| Match allocation | 🟡 | Research exists, but complete retail-client match allocation and handoff are not in the stable v94 baseline. |
+| Match allocation | 🟡 | Research exists, but complete retail-client match allocation and handoff are not in the stable v94 baseline. The stable bridge/spawner are components, not a complete allocation service. |
 | TDR/protocol documentation | 🟡 | Many structures/opcodes are known, but documentation and exact field verification are incomplete. |
 
 ## Broken, unavailable, or intentionally excluded
