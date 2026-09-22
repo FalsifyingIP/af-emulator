@@ -22,6 +22,7 @@ assaultfire_clan_state.json
 *.db
 
 # Local/generated mappings
+generated/
 shop_item_map.json
 
 # Logs / captures / dumps
