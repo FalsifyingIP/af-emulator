@@ -52,7 +52,7 @@ Later experimental branches are intentionally excluded from `main` until they ar
 | Real multi-account login lifecycle | 🔴 | Later experimental branches added this, but it is not part of stable v94. |
 | Real two-client friends/private chat | 🔴 | Not included in v94; later work still needs proper stock-client validation before promotion. |
 | Full clan UI/detail/member rendering | 🔴 | Nested ClanDetailedInfo/MemberInfo wire layouts are not fully verified. |
-| PvE / The Altar complete gameplay lifecycle | 🔴 | Loading/research has progressed in later experiments, but the full round handoff/gameplay lifecycle is not part of v94. |
+| PvE / The Altar complete gameplay lifecycle | 🔴 | The map can load and the player can spawn, but the PvE round/enemy lifecycle does not start correctly. See [non-working Altar sample issue #1](https://github.com/armangido/af-emulator/issues/1). |
 | Survival enemy/round backend lifecycle | 🔴 | Not implemented as a complete public stable backend. |
 | Dedicated-server allocation and UE3 handoff | 🔴 | Research exists in later branches, but stable end-to-end DS allocation/session lifecycle is not public yet. |
 | Full match start → gameplay → result lifecycle | 🔴 | Not complete in v94. |
