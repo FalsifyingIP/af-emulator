@@ -21,7 +21,12 @@ This page gives newcomers a quick mental model of the current stable local setup
 |   +---- DIR ----------------------------------> :9010     |
 |            discovers local role/zone endpoints            |
 |                                                           |
-| TGame.exe                                                 |
+| TCLS                                                      |
+|   +---- GetLoginInfo / selected-server state              |
+|   +---- CreateProcessW(TGame.exe -q <uin>)                |
+|   +---- TCLS_SHAREDMEMEMORY<child PID> ----------------+  |
+|                                                       |   |
+| TGame.exe <-------------------------------------------+   |
 |   |                                                       |
 |   +---- ROLE ---------------------------------> :65005    |
 |   |                                                       |
@@ -38,6 +43,27 @@ The client-side RSA public key and server-side private key must be a matching pa
 TCLS\config\APClient.dat   <---- pair ---->   server\PRIVATE.PEM
        public key                                private key
 ```
+
+## TCLS → TGame launch handoff
+
+The launcher does more than spawn an executable. The verified PH build creates a shared-memory mapping named:
+
+```text
+TCLS_SHAREDMEMEMORY<decimal child PID>
+```
+
+and writes login/game-server handoff information for the new TGame process.
+
+A validated runtime-only compatibility method can temporarily force `CREATE_SUSPENDED` at:
+
+```text
+TCLS.dll + 0x584E0
+8B 55 18 52  ->  6A 04 90 90
+```
+
+Only use it when the original signature matches, and restore the original bytes immediately after TGame is created.
+
+Full details: [Vital Launch Requirements](LAUNCH_REQUIREMENTS.md).
 
 ## Required TGame compatibility patch
 
