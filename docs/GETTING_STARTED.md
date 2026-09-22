@@ -6,7 +6,7 @@ This guide is written for people who just want to get the **stable public v94 em
 
 ## The short version
 
-You will do six things:
+You will do the basic backend setup, then verify the client launch handoff:
 
 ```text
 1. Clone the repo
@@ -14,8 +14,13 @@ You will do six things:
 3. Generate a local RSA key pair
 4. Redirect the old Assault Fire PH hostnames to 127.0.0.1
 5. Start the v94 server
-6. Launch your client
+6. Start the TGame datetime compatibility patcher
+7. Launch client.exe / TCLS normally
+8. If needed, use the validated TCLS suspended-launch compatibility path
+9. Confirm TGame reaches ROLE and ZONE
 ```
+
+Before your first test, also read **[Vital Launch Requirements](LAUNCH_REQUIREMENTS.md)**. It explains the TCLS → TGame shared-memory handoff and the build-specific launch patch that is easy to miss.
 
 For PvE/The Altar research, the bridge and AFDEV spawner are optional extra steps later.
 
@@ -308,7 +313,61 @@ More details: [Issue #3 — required TGame datetime patch](https://github.com/ar
 
 ---
 
-## 7. Launch Assault Fire PH
+## 7. Verify the TCLS → TGame launch handoff
+
+Do **not** treat the launcher and TGame as the same program. The normal retail path is:
+
+```text
+client.exe / TCLS
+  -> GetLoginInfo / selected server
+  -> CreateProcessW(TGame.exe -q <uin>)
+  -> TCLS_SHAREDMEMEMORY<child PID>
+  -> TGame.exe
+  -> ROLE
+  -> ZONE
+```
+
+On the validated PH TCLS build, these locations were recovered:
+
+```text
+TCLS.dll + 0x5C150   CLaunchUI::GetLoginInfo
+TCLS.dll + 0x5C230   selected game-server lookup
+TCLS.dll + 0x5C236   "Get Game Server Info fail!" check
+TCLS.dll + 0x5E7B3   shared-memory CreateFileMappingW path
+TCLS.dll + 0x584F4   CreateProcessW area
+```
+
+### Optional suspended-launch compatibility path
+
+Some preservation setups need enough time to let TCLS finish the handoff and apply TGame compatibility work before TGame initializes.
+
+At the normal launcher START stage, the validated build can temporarily use:
+
+```text
+TCLS.dll + 0x584E0
+expected: 8B 55 18 52
+patch   : 6A 04 90 90
+```
+
+That changes the creation flags to `CREATE_SUSPENDED`.
+
+Rules:
+
+- verify the expected four bytes first;
+- patch process memory only;
+- never distribute a modified `TCLS.dll`;
+- restore `8B 55 18 52` immediately after the child TGame is observed;
+- apply the TGame runtime compatibility patch while the child is suspended;
+- resume TGame afterward;
+- do not leave a debugger attached to TGame during normal protected initialization.
+
+If your setup already launches TGame reliably, do **not** apply this just because it is documented.
+
+Full details and failure diagnosis: **[LAUNCH_REQUIREMENTS.md](LAUNCH_REQUIREMENTS.md)**.
+
+---
+
+## 8. Launch Assault Fire PH
 
 Start the client using the same local client setup you normally use.
 
@@ -332,7 +391,7 @@ See [STATUS.md](STATUS.md) for the detailed working/partial/broken matrix.
 
 ---
 
-## 8. Optional: The Altar / PvE research setup
+## 9. Optional: The Altar / PvE research setup
 
 You do **not** need this part just to test VERSION/AUTH/DIR/login.
 
@@ -363,7 +422,7 @@ See **[The Altar investigation — Issue #1](https://github.com/armangido/af-emu
 
 ---
 
-## 9. Super-simple troubleshooting
+## 10. Super-simple troubleshooting
 
 ### Server says it cannot load PRIVATE.PEM
 
@@ -429,7 +488,7 @@ Close an older copy of the emulator before starting another one.
 
 ---
 
-## 10. How to report a useful bug
+## 11. How to report a useful bug
 
 Please include:
 
@@ -462,7 +521,7 @@ Never attach `PRIVATE.PEM`.
 
 ---
 
-## 11. Easy ways to contribute
+## 12. Easy ways to contribute
 
 You do not have to know assembly.
 
