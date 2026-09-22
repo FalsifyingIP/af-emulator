@@ -1,5 +1,12 @@
 # Assault Fire Emulator
 
+[![Python](https://img.shields.io/badge/Python-3.12+-blue)](https://www.python.org/)
+[![Engine](https://img.shields.io/badge/Engine-Unreal%20Engine%203-lightgrey)](#)
+[![Status](https://img.shields.io/badge/status-preservation%20research-orange)](docs/STATUS.md)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+**Tags:** `assault-fire` · `game-preservation` · `server-emulation` · `reverse-engineering` · `unreal-engine-3` · `python` · `network-protocol` · `private-server-research`
+
 An unofficial, community-driven preservation and server-emulation project for **Assault Fire PH**.
 
 > This project is not affiliated with, endorsed by, or sponsored by Tencent, Level Up! Games, or any original rights holder.
@@ -72,6 +79,8 @@ New to the project?
 - **[Contributing guide](CONTRIBUTING.md)** — rules for safe protocol research, pull requests, and sanitized evidence.
 - **[Stable PvE bridge + server spawner](docs/PVE_BRIDGE_AND_SPAWNER.md)** — known-good v5 UDP bridge and v26 AFDEV listen-server launcher used for The Altar research.
 - **[Local hosts redirect](config/hosts.txt)** — ready-to-copy mappings for the retired PH service hostnames → `127.0.0.1`.
+- **[FAQ](docs/FAQ.md)** — common crashes, RSA/APClient questions, ports, The Altar status, and troubleshooting.
+- **[Architecture + port map](docs/ARCHITECTURE.md)** — quick diagram of how TCLS, TGame, the emulator, bridge, and AFDEV fit together.
 
 ## Current public baseline
 
