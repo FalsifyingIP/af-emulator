@@ -5,8 +5,6 @@
 [![Status](https://img.shields.io/badge/status-preservation%20research-orange)](docs/STATUS.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Tags:** `assault-fire` · `game-preservation` · `server-emulation` · `reverse-engineering` · `unreal-engine-3` · `python` · `network-protocol` · `private-server-research`
-
 An unofficial, community-driven preservation and server-emulation project for **Assault Fire PH**.
 
 > This project is not affiliated with, endorsed by, or sponsored by Tencent, Level Up! Games, or any original rights holder.
