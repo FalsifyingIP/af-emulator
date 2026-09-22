@@ -16,6 +16,40 @@ An unofficial, community-driven preservation and server-emulation project for **
 
 ➡️ **[Open the full non-working The Altar sample / investigation — Issue #1](https://github.com/armangido/af-emulator/issues/1)**
 
+## Easy setup
+
+For a first local test:
+
+```powershell
+git clone https://github.com/armangido/af-emulator.git
+cd af-emulator
+
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+Generate the matching local RSA key pair and install the public key into your Assault Fire `TCLS\config` folder:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\setup\generate_local_rsa_keypair.py --client-config-dir "D:\YourAssaultFireFolder\TCLS\config"
+```
+
+Then, from **Administrator PowerShell**, redirect the retired PH services to localhost:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\setup\setup_assaultfire_hosts.ps1
+```
+
+Start the stable server:
+
+```powershell
+.\.venv\Scripts\python.exe .\server\assaultfire_server_v94.py
+```
+
+The RSA helper creates `server\PRIVATE.PEM` automatically. **Never upload or commit that file.**
+
+➡️ **[Read the very easy step-by-step tutorial](docs/GETTING_STARTED.md)**
+
 ## Start here
 
 New to the project?
