@@ -1,6 +1,9 @@
 # Secrets / credentials
 *.pem
+*.PEM
+PRIVATE.PEM
 *.key
+*.KEY
 *.pfx
 *.p12
 .env
@@ -8,12 +11,18 @@
 secrets/
 private/
 
-# Local player/account state
+# Local player/account/runtime state
 *player_state*.json
 *account_state*.json
 *profile_state*.json
+*clan_state*.json
+assaultfire_player_state.json
+assaultfire_clan_state.json
 *.sqlite
 *.db
+
+# Local/generated mappings
+shop_item_map.json
 
 # Logs / captures / dumps
 *.log
