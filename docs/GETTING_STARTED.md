@@ -459,6 +459,35 @@ See **[The Altar investigation — Issue #1](https://github.com/armangido/af-emu
 
 ## 10. Super-simple troubleshooting
 
+### Launcher says "AP client initialization failed."
+
+First look at the emulator window. If you see VERSION traffic but **no `[AUTH] Connected ...`**, TCLS failed to initialize the AP client locally before it even reached the emulator's AUTH protocol.
+
+Reinstall a matching generated APClient file into the exact client copy you launch:
+
+~~~powershell
+.\.venv\Scripts\python.exe .\tools\setup\generate_local_rsa_keypair.py --client-config-dir "D:\Assault Fire PH\TCLS\config" --force
+~~~
+
+Then verify:
+
+~~~powershell
+Get-Item "D:\Assault Fire PH\TCLS\config\APClient.dat" | Select-Object FullName,Length
+Get-Content "D:\Assault Fire PH\TCLS\config\APClient.dat" -TotalCount 1
+~~~
+
+The repository-generated file should be **272 bytes** and start with:
+
+~~~text
+-----BEGIN PUBLIC KEY-----
+~~~
+
+Important: the known PH setup needs the client-side TCLS configuration that accepts this raw PEM form. If VERSION succeeds but AUTH is never opened, repeatedly changing the server's AP response will not fix that stage.
+
+Also, `TCLS.dll+0x584E0` is the **TGame suspended-launch patch**, not the APClient loader fix.
+
+See **[Launcher / AP / TGame Error Reference](LAUNCHER_ERRORS.md#ap-client-initialization-failed)** for the full diagnosis.
+
 ### Server says it cannot load PRIVATE.PEM
 
 Run the generator again:
