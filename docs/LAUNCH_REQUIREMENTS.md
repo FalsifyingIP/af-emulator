@@ -131,6 +131,67 @@ nop
 
 If your existing local setup already launches TGame reliably, **do not add this patch just because it is documented here**. It is a compatibility/diagnostic method, not a protocol requirement.
 
+### Automated helper — recommended when this path is needed
+
+The repository includes:
+
+```text
+tools/patches/patch_tcls_suspended_launch.py
+```
+
+Run the normal launcher first, log in, and stop at the **START** screen. Close/detach x32dbg, then run from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tcls_suspended_launch.py
+```
+
+When it prints:
+
+```text
+TCLS ARMED
+Click START in the Assault Fire launcher now.
+```
+
+click START.
+
+The helper performs the complete debugger-free sequence:
+
+```text
+verify TCLS+0x584E0
+        |
+        v
+8B 55 18 52 -> 6A 04 90 90
+        |
+        v
+TCLS creates a NEW TGame.exe suspended
+        |
+        v
+restore TCLS immediately
+        |
+        v
+find suspended TGame image
+        |
+        v
+apply patch_tgame_datetime.py
+        |
+        v
+resume TGame primary thread
+```
+
+It snapshots existing TGame PIDs before arming TCLS, so an older TGame process is not mistaken for the newly created child. It also prefers a new `TGame.exe` whose parent PID is the active `client.exe`.
+
+The TCLS restore runs from a `finally` path. On timeout, Ctrl+C, or an ordinary Python error, the helper attempts to put the four original TCLS bytes back before exiting.
+
+If the TGame datetime signature does not match, the helper **does not resume the child**. It leaves TGame suspended so a mismatched build does not continue through a known compatibility failure path.
+
+For manual inspection after both patches:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tcls_suspended_launch.py --leave-suspended
+```
+
+When using this combined helper, **do not run `patch_tgame_datetime.py` separately for the same launch**.
+
 ## Why the shared-memory handoff matters
 
 TCLS and TGame do not simply communicate by command-line arguments.
@@ -163,11 +224,13 @@ launch path whenever possible.
 
 The known PH `TGame.exe` can crash in a legacy datetime conversion path.
 
-The repository already includes:
+The repository includes the standalone patcher:
 
 ```text
 tools/patches/patch_tgame_datetime.py
 ```
+
+The combined `patch_tcls_suspended_launch.py` helper imports and applies this same verified datetime patch while TGame is suspended, so users of the combined path do not need to run it separately.
 
 Validated patch point:
 
@@ -235,19 +298,25 @@ For the stable public backend:
 1. Generate/install the matching RSA pair.
 2. Redirect the retired PH hostnames to localhost.
 3. Start server/assaultfire_server_v94.py.
-4. Start tools/patches/patch_tgame_datetime.py.
-5. Start client.exe / TCLS normally.
-6. Log in and reach the normal START stage.
-7. If your build needs the suspended-launch compatibility path:
-     verify TCLS+0x584E0 == 8B 55 18 52
-     temporarily use 6A 04 90 90
-8. Start the game through TCLS.
-9. Confirm TCLS creates TGame and writes TCLS_SHAREDMEMEMORY<PID>.
-10. Restore TCLS original bytes immediately.
-11. Ensure the TGame runtime patch has been applied.
-12. Resume TGame if it was intentionally created suspended.
-13. Confirm the server sees OWNER=TGame.exe on ROLE, then ZONE.
+4. Start client.exe / TCLS normally.
+5. Log in and reach the normal START stage.
+6. Choose ONE launch compatibility path:
+
+   A) Normal TCLS launch:
+      start tools/patches/patch_tgame_datetime.py
+      click START
+
+   B) Suspended TCLS handoff:
+      start tools/patches/patch_tcls_suspended_launch.py
+      wait for "TCLS ARMED"
+      click START
+      helper restores TCLS + patches datetime + resumes TGame
+
+7. Confirm TCLS_SHAREDMEMEMORY<PID> is created/written.
+8. Confirm the server sees OWNER=TGame.exe on ROLE, then ZONE.
 ```
+
+Do not run Path A and Path B simultaneously.
 
 ## Useful failure split
 
