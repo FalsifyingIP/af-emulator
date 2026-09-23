@@ -2,6 +2,27 @@
 
 This FAQ covers the most common setup and troubleshooting questions for the public **Assault Fire PH emulator v94** baseline.
 
+## I got an AP / launcher / TGame error code. Where do I look?
+
+Use the dedicated **[Launcher / AP / TGame Error Reference](LAUNCHER_ERRORS.md)**.
+
+It currently catalogs the errors we have actually observed or verified, including:
+
+- AP cmd 4 / cmd 5 failure checkpoints;
+- RSA/APClient mismatch symptoms;
+- AP framing/padding diagnostics;
+- `Get Game Server Info fail!`;
+- `Get loginInfo fail!`;
+- `Network is disconnected:Connection Closed!`;
+- known legacy security warning tuples such as `(1, 81008, 4B)`;
+- `0xC000071C STATUS_INVALID_THREAD`;
+- `0xC0000005`;
+- TGame datetime/signature errors.
+
+Unknown codes are intentionally marked unknown instead of being guessed.
+
+---
+
 ## Why does TGame.exe crash even though the server is running?
 
 The known PH client build can enter a datetime conversion path with an invalid/pre-1900 year and crash.
