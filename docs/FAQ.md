@@ -50,6 +50,28 @@ See [Issue #3](https://github.com/armangido/af-emulator/issues/3).
 
 ---
 
+## What about the old kernel anti-cheat / security driver?
+
+The original PH client includes a legacy kernel-level security / anti-cheat component from an older Windows era.
+
+On modern Windows, it may cause:
+
+- startup failure;
+- early TGame/client crashes;
+- driver initialization errors;
+- conflicts with current Windows security;
+- instability that looks like an emulator/network problem.
+
+For local preservation testing, some users may need an environment where that obsolete security-driver path is not active or is otherwise avoided.
+
+This project does **not** provide instructions or tooling for defeating active anti-cheat/security systems. Any system/driver/security configuration changes a user independently chooses to make are at that user's own risk.
+
+The maintainers and contributors are not responsible for damage, instability, data loss, security issues, or driver/system consequences caused by third-party tools, original game drivers, or user-performed system changes.
+
+See [Issue #4](https://github.com/armangido/af-emulator/issues/4), [Vital Setup Notes](VITAL_SETUP_NOTES.md), and [DISCLAIMER.md](../DISCLAIMER.md).
+
+---
+
 ## What version should I use?
 
 Use the public **v94 stable baseline**.
