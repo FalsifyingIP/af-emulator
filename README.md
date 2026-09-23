@@ -50,6 +50,16 @@ runtime : 6A 04 90 90   ; push CREATE_SUSPENDED, nop, nop
 
 It must be restored immediately after the child TGame is created. **Do not patch a different build unless the original signature matches. Do not distribute a modified TCLS.dll.**
 
+The repository now includes a debugger-free helper that automates this safely:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tcls_suspended_launch.py
+```
+
+Run it after `client.exe / TCLS` is logged in and sitting at the normal **START** screen. It verifies the TCLS signature, temporarily enables `CREATE_SUSPENDED`, detects the new child `TGame.exe`, restores TCLS immediately, applies the existing TGame datetime patch while the child is suspended, and then resumes TGame.
+
+**When using this combined helper, do not also run `patch_tgame_datetime.py` separately.**
+
 ➡️ **[Read the full TCLS → TGame launch and compatibility guide](docs/LAUNCH_REQUIREMENTS.md)**
 
 ### Legacy kernel anti-cheat / security-driver compatibility
@@ -94,13 +104,12 @@ Start the stable server:
 
 The RSA helper creates `server\PRIVATE.PEM` automatically. **Never upload or commit that file.**
 
-Before launching the client, start the required **TGame datetime patch** in another PowerShell window:
+For the validated PH build, choose **one** client compatibility path:
 
-```powershell
-.\.venv\Scripts\python.exe .\tools\patches\patch_tgame_datetime.py
-```
+- **Normal TCLS launch:** run `tools\patches\patch_tgame_datetime.py` before clicking START.
+- **Suspended TCLS handoff:** log in to the launcher, stop at START, then run `tools\patches\patch_tcls_suspended_launch.py`. The combined helper includes the datetime patch automatically.
 
-This runtime-only patch prevents the known client datetime crash on the validated PH build. See [Issue #3](https://github.com/armangido/af-emulator/issues/3).
+Do not run both patchers for the same launch. See [Issue #3](https://github.com/armangido/af-emulator/issues/3) and [Vital Launch Requirements](docs/LAUNCH_REQUIREMENTS.md).
 
 ➡️ **[Read the very easy step-by-step tutorial](docs/GETTING_STARTED.md)**
 
