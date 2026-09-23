@@ -104,6 +104,8 @@ Start the stable server:
 
 The RSA helper creates `server\PRIVATE.PEM` automatically. **Never upload or commit that file.**
 
+> **Launcher popup: `AP client initialization failed.`?** If the server receives VERSION but never logs `[AUTH] Connected ...`, the failure is still inside TCLS/APClient initialization. Verify the installed `TCLS\config\APClient.dat` is the repository-generated 272-byte raw PEM public key and that you are launching the same client copy you configured. See **[the AP client initialization troubleshooting steps](docs/LAUNCHER_ERRORS.md#ap-client-initialization-failed)**.
+
 For the validated PH build, choose **one** client compatibility path:
 
 - **Normal TCLS launch:** run `tools\patches\patch_tgame_datetime.py` before clicking START.
