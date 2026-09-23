@@ -263,6 +263,22 @@ Keep the server window open while testing.
 
 ---
 
+## Before launching: legacy security-driver compatibility
+
+The original Assault Fire PH client includes a legacy kernel-level security / anti-cheat component designed for an older Windows environment.
+
+On modern Windows, this old component can cause startup failures, crashes, driver initialization errors, or other instability even when the local emulator is responding correctly.
+
+For preservation testing, some users may need a local test environment where that obsolete security-driver path is not active or is otherwise avoided.
+
+This repository does **not** provide instructions or tooling for defeating active anti-cheat/security systems.
+
+Any operating-system, driver, boot-policy, virtualization, or security configuration changes a user independently chooses to make are at that user's own risk. The project maintainers/contributors are not responsible for system instability, data loss, security problems, driver failures, or other consequences caused by third-party tools, original game drivers, or user-performed system changes.
+
+See [Issue #4](https://github.com/armangido/af-emulator/issues/4), [Vital Setup Notes](VITAL_SETUP_NOTES.md), and [DISCLAIMER.md](../DISCLAIMER.md).
+
+---
+
 ## 6. Apply the required TGame datetime compatibility patch
 
 Before launching the game, start the runtime datetime patcher in a **second PowerShell window**:
