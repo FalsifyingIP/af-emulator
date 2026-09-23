@@ -52,6 +52,16 @@ It must be restored immediately after the child TGame is created. **Do not patch
 
 ➡️ **[Read the full TCLS → TGame launch and compatibility guide](docs/LAUNCH_REQUIREMENTS.md)**
 
+### Legacy kernel anti-cheat / security-driver compatibility
+
+The original PH client includes an old kernel-level security / anti-cheat component. On modern Windows this legacy component can cause startup failures, crashes, driver initialization errors, or other instability **even when the emulator itself is working correctly**.
+
+For preservation testing, this may require using a local test environment where the obsolete security-driver path is not active or is otherwise avoided. The project does **not** provide instructions or tooling for defeating active anti-cheat/security systems.
+
+Any system, driver, boot-policy, virtualization, or security configuration changes a user independently chooses to make are performed at their own risk. The maintainers/contributors are not responsible for damage, instability, data loss, security problems, driver failures, or other consequences caused by third-party tools, original game drivers, or user-performed system changes.
+
+See **[Issue #4](https://github.com/armangido/af-emulator/issues/4)**, **[Vital Setup Notes](docs/VITAL_SETUP_NOTES.md)**, and **[DISCLAIMER.md](DISCLAIMER.md)**.
+
 ## Easy setup
 
 For a first local test:
@@ -107,6 +117,8 @@ New to the project?
 - **[FAQ](docs/FAQ.md)** — common crashes, RSA/APClient questions, ports, The Altar status, and troubleshooting.
 - **[Architecture + port map](docs/ARCHITECTURE.md)** — quick diagram of how TCLS, TGame, the emulator, bridge, and AFDEV fit together.
 - **[Vital launch requirements](docs/LAUNCH_REQUIREMENTS.md)** — TCLS → TGame handoff, shared memory, validated TCLS runtime patch, TGame compatibility patch, and failure diagnosis.
+- **[Vital setup notes](docs/VITAL_SETUP_NOTES.md)** — key, hosts, datetime, legacy security-driver compatibility, and isolation warnings.
+- **[Disclaimer](DISCLAIMER.md)** — project scope, legacy driver compatibility, and responsibility for user-performed system changes.
 
 ## Current public baseline
 
