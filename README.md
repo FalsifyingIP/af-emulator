@@ -115,6 +115,7 @@ New to the project?
 - **[Stable PvE bridge + server spawner](docs/PVE_BRIDGE_AND_SPAWNER.md)** — known-good v5 UDP bridge and v26 AFDEV listen-server launcher used for The Altar research.
 - **[Local hosts redirect](config/hosts.txt)** — ready-to-copy mappings for the retired PH service hostnames → `127.0.0.1`.
 - **[FAQ](docs/FAQ.md)** — common crashes, RSA/APClient questions, ports, The Altar status, and troubleshooting.
+- **[Launcher / AP / TGame error reference](docs/LAUNCHER_ERRORS.md)** — known AP/AUTH errors, TCLS launcher logs, TGame popups, security warning codes, crash codes, and what each one usually means.
 - **[Architecture + port map](docs/ARCHITECTURE.md)** — quick diagram of how TCLS, TGame, the emulator, bridge, and AFDEV fit together.
 - **[Vital launch requirements](docs/LAUNCH_REQUIREMENTS.md)** — TCLS → TGame handoff, shared memory, validated TCLS runtime patch, TGame compatibility patch, and failure diagnosis.
 - **[Vital setup notes](docs/VITAL_SETUP_NOTES.md)** — key, hosts, datetime, legacy security-driver compatibility, and isolation warnings.
