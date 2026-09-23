@@ -42,6 +42,7 @@ Later experimental branches are intentionally excluded from `main` until they ar
 | Clans | 🟡 | Basic create/name/persistence behavior exists. Large nested clan detail/member responses were deliberately not guessed and still require verification. |
 | Inventory/equipment | 🟡 | The stable profile/property path works, but not every item/equipment/UI edge case is verified. |
 | Match allocation | 🟡 | Research exists, but complete retail-client match allocation and handoff are not in the stable v94 baseline. The stable bridge/spawner are components, not a complete allocation service. |
+| Legacy kernel security-driver compatibility | 🟡 | The original client security driver can cause startup/crash problems on modern Windows independently of the emulator. Track separately in Issue #4; system-level changes are outside the supported emulator implementation. |
 | TDR/protocol documentation | 🟡 | Many structures/opcodes are known, but documentation and exact field verification are incomplete. |
 
 ## Broken, unavailable, or intentionally excluded
