@@ -14,9 +14,11 @@ You will do the basic backend setup, then verify the client launch handoff:
 3. Generate a local RSA key pair
 4. Redirect the old Assault Fire PH hostnames to 127.0.0.1
 5. Start the v94 server
-6. Start the TGame datetime compatibility patcher
-7. Launch client.exe / TCLS normally
-8. If needed, use the validated TCLS suspended-launch compatibility path
+6. Launch client.exe / TCLS and log in until START is available
+7. Choose ONE compatibility path:
+   - normal launch: patch_tgame_datetime.py
+   - suspended launch: patch_tcls_suspended_launch.py
+8. Click START
 9. Confirm TGame reaches ROLE and ZONE
 ```
 
@@ -279,53 +281,70 @@ See [Issue #4](https://github.com/armangido/af-emulator/issues/4), [Vital Setup 
 
 ---
 
-## 6. Apply the required TGame datetime compatibility patch
+## 6. Choose one client compatibility path
 
-Before launching the game, start the runtime datetime patcher in a **second PowerShell window**:
+The validated PH client needs the TGame datetime compatibility fix. There are now **two ways** to apply it. Use only one for a given launch.
+
+### Path A — normal TCLS launch
+
+If your TCLS already launches TGame reliably, start the standalone datetime patcher in a second PowerShell window:
 
 ```powershell
 .\.venv\Scripts\python.exe .\tools\patches\patch_tgame_datetime.py
 ```
 
-You should see:
-
-```text
-Waiting for TGame.exe ...
-You can launch the game now.
-```
-
-Leave that window open and then launch Assault Fire.
-
-When `TGame.exe` starts, the helper should print:
-
-```text
-PATCHED
-...
-Datetime fix is active for this TGame process.
-```
-
-### Why this is needed
-
-The known PH client build can enter a datetime conversion path with an invalid/pre-1900 year and crash.
-
-The runtime patch is applied at:
+It waits for `TGame.exe`, verifies:
 
 ```text
 TGame.exe + 0x010B9510
-VA 0x014B9510 when image base = 0x00400000
+expected: 83 EC 24 53 8B 5C 24 2C
 ```
 
-The patcher first verifies the expected original bytes:
+and applies the runtime-only datetime fix.
+
+### Path B — debugger-free suspended TCLS launch
+
+If your setup needs the proven TCLS handoff timing, first launch `client.exe / TCLS`, log in, and stop at the normal **START** screen.
+
+Close/detach x32dbg, then run:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tcls_suspended_launch.py
+```
+
+Wait for:
 
 ```text
-83 EC 24 53 8B 5C 24 2C
+TCLS ARMED
+Click START in the Assault Fire launcher now.
 ```
 
-If your TGame build does not match, the helper stops and patches nothing.
+Then click START.
 
-This is a **runtime-only compatibility patch**. It does not modify `TGame.exe` on disk.
+The combined helper will:
 
-More details: [Issue #3 — required TGame datetime patch](https://github.com/armangido/af-emulator/issues/3).
+1. locate the loaded `TCLS.dll`;
+2. verify `TCLS.dll+0x584E0 == 8B 55 18 52`;
+3. temporarily change those bytes to `6A 04 90 90` so TGame is created suspended;
+4. detect the new child `TGame.exe`;
+5. restore the original TCLS bytes immediately;
+6. apply `patch_tgame_datetime.py` to the suspended child;
+7. resume the primary TGame thread;
+8. print a final success summary.
+
+This is runtime-only. It does not modify `TCLS.dll` or `TGame.exe` on disk.
+
+If either TCLS or TGame has a signature mismatch, the helper stops instead of forcing the patch. If the datetime patch fails after child creation, TGame is intentionally left suspended rather than resumed into a known failure path.
+
+For manual inspection, you can keep TGame suspended after both runtime patches:
+
+```powershell
+.\.venv\Scripts\python.exe .\tools\patches\patch_tcls_suspended_launch.py --leave-suspended
+```
+
+**Do not run the standalone datetime patcher at the same time as the combined helper.**
+
+More details: [Vital Launch Requirements](LAUNCH_REQUIREMENTS.md) and [Issue #3](https://github.com/armangido/af-emulator/issues/3).
 
 ---
 
